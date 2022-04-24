@@ -1,27 +1,31 @@
 import React from 'react';
+import {ISong} from '../interfaces/interfaces';
 
-const LibrarySong = props => {
+interface iLibrarySong {
+  song: ISong;
+  songs: ISong[];
+  setCurrentSong: (currentSong: ISong) => void;
+  id: string;
+  audioRef: React.RefObject<HTMLAudioElement>;
+  isPlaying: boolean;
+  setSongs: (songs: ISong[]) => void;
+}
+
+const LibrarySong = (props: iLibrarySong) => {
   const {song, songs, setCurrentSong, id, audioRef, isPlaying, setSongs} = props;
 
-  const songSelectHandler = async () => {
+  const songSelectHandler = async (): Promise<void> => {
     await setCurrentSong(song);
 
     const newSongs = songs.map(song => {
-      if (song.id === id) {
-        return {
-          ...song,
-          active: true
-        };
-      } else {
-        return {
-          ...song,
-          active: false
-        };
-      }
+      return {
+        ...song,
+        active: song.id === id
+      };
     });
     setSongs(newSongs);
 
-    if (isPlaying) audioRef.current.play();
+    if (isPlaying && audioRef.current !== null) audioRef.current.play();
   };
 
   return (

@@ -1,6 +1,14 @@
 import React from 'react';
 
-const Song = props => {
+interface iCurrentSong {
+  currentSong: {
+    cover: string;
+    name: string;
+    artist: string;
+  };
+}
+
+const Song = (props: iCurrentSong) => {
   const {currentSong} = props;
 
   return (

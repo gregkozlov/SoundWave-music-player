@@ -1,7 +1,12 @@
 import React from 'react';
+import {iLibrary} from '../interfaces/interfaces';
 import LibrarySong from './LibrarySong';
 
-const Library = props => {
+interface iLibraryProps extends iLibrary {
+  children?: React.ReactNode | React.ReactChild;
+}
+
+const Library = (props: iLibraryProps) => {
   const {songs, setCurrentSong, audioRef, isPlaying, setSongs, libraryStatus} = props;
 
   return (

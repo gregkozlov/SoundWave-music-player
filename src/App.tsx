@@ -5,13 +5,15 @@ import Song from './components/Song';
 import Nav from './components/Nav';
 import './styles/app.scss';
 import data from './data';
+import {ISong} from './interfaces/interfaces';
+import {ISongInfo} from './interfaces/interfaces';
 
 function App() {
-  const audioRef = useRef(null);
-  const [songs, setSongs] = useState(data());
-  const [currentSong, setCurrentSong] = useState(songs[0]);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [songs, setSongs] = useState<ISong[]>(data());
+  const [currentSong, setCurrentSong] = useState<ISong>(songs[0]);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [songInfo, setSongInfo] = useState({
+  const [songInfo, setSongInfo] = useState<ISongInfo>({
     currentTime: 0,
     duration: 0,
     animationPercentage: 0
@@ -19,7 +21,7 @@ function App() {
 
   const [libraryStatus, setLibraryStatus] = useState(false);
 
-  const timeUpdateHandler = e => {
+  const timeUpdateHandler = (e: React.ChangeEvent<HTMLAudioElement>) => {
     const current = e.target.currentTime;
     const duration = e.target.duration;
 
@@ -30,10 +32,12 @@ function App() {
     setSongInfo({...songInfo, currentTime: current, duration, animationPercentage: animation});
   };
 
-  const songEndHandler = async () => {
+  const songEndHandler = async (): Promise<void> => {
     let currentIndex = songs.findIndex(song => song.id === currentSong.id);
     await setCurrentSong(songs[(currentIndex + 1) % songs.length]);
-    if (isPlaying) audioRef.current.play();
+    if (isPlaying && audioRef.current != null) {
+      audioRef.current.play();
+    }
   };
 
   return (

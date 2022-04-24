@@ -2,7 +2,12 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMusic} from '@fortawesome/free-solid-svg-icons';
 
-const Nav = props => {
+interface iNav {
+  libraryStatus: boolean;
+  setLibraryStatus: (libraryStatus: boolean) => void;
+}
+
+const Nav = (props: iNav) => {
   const {libraryStatus, setLibraryStatus} = props;
 
   return (

@@ -1,8 +1,32 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlay, faAngleLeft, faAngleRight, faPause} from '@fortawesome/free-solid-svg-icons';
+import {ISong} from '../interfaces/interfaces';
+import {ISongInfo} from '../interfaces/interfaces';
 
-const Player = props => {
+interface iPlayer {
+  currentSong: ISong;
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
+  audioRef: React.RefObject<HTMLAudioElement>;
+  songInfo: ISongInfo;
+  setSongInfo: (songInfo: ISongInfo) => void;
+  songs: ISong[];
+  setCurrentSong: (currentSong: ISong) => void;
+  setSongs: (songs: ISong[]) => void;
+}
+
+interface iActiveLibraryHandler {
+  name: string;
+  artist: string;
+  id: string;
+  active: boolean;
+  color: string[];
+  cover: string;
+  audio: string;
+}
+
+const Player = (props: iPlayer) => {
   const {
     currentSong,
     isPlaying,
@@ -15,59 +39,59 @@ const Player = props => {
     setSongs
   } = props;
 
-  const activeLibraryHandler = nextPrev => {
+  const activeLibraryHandler = (nextPrev: iActiveLibraryHandler) => {
     const newSongs = songs.map(song => {
-      if (song.id === nextPrev.id) {
-        return {
-          ...song,
-          active: true
-        };
-      } else {
-        return {
-          ...song,
-          active: false
-        };
-      }
+      return {
+        ...song,
+        active: song.id === nextPrev.id
+      };
     });
     setSongs(newSongs);
   };
 
   const playSongHandler = () => {
-    if (isPlaying) {
+    if (isPlaying && audioRef.current != null) {
       audioRef.current.pause();
       setIsPlaying(false);
-    } else {
+    } else if (audioRef.current != null) {
       audioRef.current.play();
       setIsPlaying(true);
     }
   };
 
-  const getTime = time => {
+  const getTime = (time: number) => {
     return Math.floor(time / 60) + ':' + ('0' + Math.floor(time % 60)).slice(-2);
   };
 
-  const dragHandler = e => {
-    audioRef.current.currentTime = e.target.value;
-    setSongInfo({...songInfo, currentTime: e.target.value});
+  const dragHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (audioRef.current != null) {
+      if (audioRef.current != null) {
+        audioRef.current.currentTime = Number(e.target.value);
+        setSongInfo({...songInfo, currentTime: Number(e.target.value)});
+      }
+    }
   };
 
-  const skipTrackHandler = async direction => {
+  const skipTrackHandler = async (direction: string): Promise<void> => {
     let currentIndex = songs.findIndex(song => song.id === currentSong.id);
+    const oneSongForward = songs[(currentIndex + 1) % songs.length];
+    const oneSongBackward = songs[songs.length - 1];
+    const oneSongBackwardOnLastSong = songs[(currentIndex - 1) % songs.length];
     if (direction === 'skip-forward') {
-      await setCurrentSong(songs[(currentIndex + 1) % songs.length]);
-      activeLibraryHandler(songs[(currentIndex + 1) % songs.length]);
+      await setCurrentSong(oneSongForward);
+      activeLibraryHandler(oneSongForward);
     }
     if (direction === 'skip-back') {
       if ((currentIndex - 1) % songs.length === -1) {
-        await setCurrentSong(songs[songs.length - 1]);
-        activeLibraryHandler(songs[songs.length - 1]);
-        if (isPlaying) audioRef.current.play();
+        await setCurrentSong(oneSongBackward);
+        activeLibraryHandler(oneSongBackward);
+        if (isPlaying && audioRef.current != null) audioRef.current.play();
         return;
       }
-      await setCurrentSong(songs[(currentIndex - 1) % songs.length]);
-      activeLibraryHandler(songs[(currentIndex - 1) % songs.length]);
+      await setCurrentSong(oneSongBackwardOnLastSong);
+      activeLibraryHandler(oneSongBackwardOnLastSong);
     }
-    if (isPlaying) audioRef.current.play();
+    if (isPlaying && audioRef.current != null) audioRef.current.play();
   };
 
   const trackAnim = {
