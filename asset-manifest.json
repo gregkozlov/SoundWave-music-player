@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/SoundWave-music-player/static/css/main.72d1d52b.css",
+    "main.js": "/SoundWave-music-player/static/js/main.0553bc52.js",
+    "index.html": "/SoundWave-music-player/index.html",
+    "main.72d1d52b.css.map": "/SoundWave-music-player/static/css/main.72d1d52b.css.map",
+    "main.0553bc52.js.map": "/SoundWave-music-player/static/js/main.0553bc52.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.72d1d52b.css",
+    "static/js/main.0553bc52.js"
+  ]
+}
